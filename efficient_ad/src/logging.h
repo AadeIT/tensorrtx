@@ -17,7 +17,6 @@
 #ifndef TENSORRT_LOGGING_H
 #define TENSORRT_LOGGING_H
 
-#include "NvInferRuntimeCommon.h"
 #include <cassert>
 #include <ctime>
 #include <iomanip>
@@ -25,21 +24,17 @@
 #include <ostream>
 #include <sstream>
 #include <string>
-
+#include "NvInferRuntimeCommon.h"
 #include "macros.h"
-
 
 using Severity = nvinfer1::ILogger::Severity;
 
 class LogStreamConsumerBuffer : public std::stringbuf {
- public:
+   public:
     LogStreamConsumerBuffer(std::ostream& stream, const std::string& prefix, bool shouldLog)
-        : mOutput(stream)
-        , mPrefix(prefix)
-        , mShouldLog(shouldLog) {}
+        : mOutput(stream), mPrefix(prefix), mShouldLog(shouldLog) {}
 
-    LogStreamConsumerBuffer(LogStreamConsumerBuffer&& other)
-        : mOutput(other.mOutput) {}
+    LogStreamConsumerBuffer(LogStreamConsumerBuffer&& other) : mOutput(other.mOutput) {}
 
     ~LogStreamConsumerBuffer() {
         // std::streambuf::pbase() gives a pointer to the beginning of the buffered part of the output sequence
@@ -81,11 +76,9 @@ class LogStreamConsumerBuffer : public std::stringbuf {
         }
     }
 
-    void setShouldLog(bool shouldLog) {
-        mShouldLog = shouldLog;
-    }
+    void setShouldLog(bool shouldLog) { mShouldLog = shouldLog; }
 
- private:
+   private:
     std::ostream& mOutput;
     std::string mPrefix;
     bool mShouldLog;
@@ -96,11 +89,11 @@ class LogStreamConsumerBuffer : public std::stringbuf {
 //! \brief Convenience object used to initialize LogStreamConsumerBuffer before std::ostream in LogStreamConsumer
 //!
 class LogStreamConsumerBase {
- public:
+   public:
     LogStreamConsumerBase(std::ostream& stream, const std::string& prefix, bool shouldLog)
         : mBuffer(stream, prefix, shouldLog) {}
 
- protected:
+   protected:
     LogStreamConsumerBuffer mBuffer;
 };
 
@@ -114,39 +107,48 @@ class LogStreamConsumerBase {
 //!  Please do not change the order of the parent classes.
 //!
 class LogStreamConsumer : protected LogStreamConsumerBase, public std::ostream {
- public:
+   public:
     //! \brief Creates a LogStreamConsumer which logs messages with level severity.
     //!  Reportable severity determines if the messages are severe enough to be logged.
     LogStreamConsumer(Severity reportableSeverity, Severity severity)
-        : LogStreamConsumerBase(severityOstream(severity), severityPrefix(severity), severity <= reportableSeverity)
-        , std::ostream(&mBuffer)  // links the stream buffer with the stream
-        , mShouldLog(severity <= reportableSeverity)
-        , mSeverity(severity) {}
+        : LogStreamConsumerBase(severityOstream(severity), severityPrefix(severity), severity <= reportableSeverity),
+          std::ostream(&mBuffer)  // links the stream buffer with the stream
+          ,
+          mShouldLog(severity <= reportableSeverity),
+          mSeverity(severity) {}
 
     LogStreamConsumer(LogStreamConsumer&& other)
-        : LogStreamConsumerBase(severityOstream(other.mSeverity), severityPrefix(other.mSeverity), other.mShouldLog)
-        , std::ostream(&mBuffer)  // links the stream buffer with the stream
-        , mShouldLog(other.mShouldLog)
-        , mSeverity(other.mSeverity) {}
+        : LogStreamConsumerBase(severityOstream(other.mSeverity), severityPrefix(other.mSeverity), other.mShouldLog),
+          std::ostream(&mBuffer)  // links the stream buffer with the stream
+          ,
+          mShouldLog(other.mShouldLog),
+          mSeverity(other.mSeverity) {}
 
     void setReportableSeverity(Severity reportableSeverity) {
         mShouldLog = mSeverity <= reportableSeverity;
         mBuffer.setShouldLog(mShouldLog);
     }
 
- private:
+   private:
     static std::ostream& severityOstream(Severity severity) {
         return severity >= Severity::kINFO ? std::cout : std::cerr;
     }
 
     static std::string severityPrefix(Severity severity) {
         switch (severity) {
-        case Severity::kINTERNAL_ERROR: return "[F] ";
-        case Severity::kERROR: return "[E] ";
-        case Severity::kWARNING: return "[W] ";
-        case Severity::kINFO: return "[I] ";
-        case Severity::kVERBOSE: return "[V] ";
-        default: assert(0); return "";
+            case Severity::kINTERNAL_ERROR:
+                return "[F] ";
+            case Severity::kERROR:
+                return "[E] ";
+            case Severity::kWARNING:
+                return "[W] ";
+            case Severity::kINFO:
+                return "[I] ";
+            case Severity::kVERBOSE:
+                return "[V] ";
+            default:
+                assert(0);
+                return "";
         }
     }
 
@@ -179,9 +181,8 @@ class LogStreamConsumer : protected LogStreamConsumerBase, public std::ostream {
 //! object.
 
 class Logger : public nvinfer1::ILogger {
- public:
-    explicit Logger(Severity severity = Severity::kWARNING)
-        : mReportableSeverity(severity) {}
+   public:
+    Logger(Severity severity = Severity::kWARNING) : mReportableSeverity(severity) {}
 
     //!
     //! \enum TestResult
@@ -189,9 +190,9 @@ class Logger : public nvinfer1::ILogger {
     //!
     enum class TestResult {
         kRUNNING,  //!< The test is running
-        kPASSED,  //!< The test passed
-        kFAILED,  //!< The test failed
-        kWAIVED   //!< The test was waived
+        kPASSED,   //!< The test passed
+        kFAILED,   //!< The test failed
+        kWAIVED    //!< The test was waived
     };
 
     //!
@@ -201,9 +202,7 @@ class Logger : public nvinfer1::ILogger {
     //! TODO Once all samples are updated to use this method to register the logger with TensorRT,
     //! we can eliminate the inheritance of Logger from ILogger
     //!
-    nvinfer1::ILogger& getTRTLogger() {
-        return *this;
-    }
+    nvinfer1::ILogger& getTRTLogger() { return *this; }
 
     //!
     //! \brief Implementation of the nvinfer1::ILogger::log() virtual method
@@ -220,9 +219,7 @@ class Logger : public nvinfer1::ILogger {
     //!
     //! \param severity The logger will only emit messages that have severity of this level or higher.
     //!
-    void setReportableSeverity(Severity severity) {
-        mReportableSeverity = severity;
-    }
+    void setReportableSeverity(Severity severity) { mReportableSeverity = severity; }
 
     //!
     //! \brief Opaque handle that holds logging information for a particular test
@@ -232,16 +229,14 @@ class Logger : public nvinfer1::ILogger {
     //! with Logger::reportTest{Start,End}().
     //!
     class TestAtom {
-     public:
+       public:
         TestAtom(TestAtom&&) = default;
 
-     private:
+       private:
         friend class Logger;
 
         TestAtom(bool started, const std::string& name, const std::string& cmdline)
-            : mStarted(started)
-            , mName(name)
-            , mCmdline(cmdline) {}
+            : mStarted(started), mName(name), mCmdline(cmdline) {}
 
         bool mStarted;
         std::string mName;
@@ -324,22 +319,27 @@ class Logger : public nvinfer1::ILogger {
         return pass ? reportPass(testAtom) : reportFail(testAtom);
     }
 
-    Severity getReportableSeverity() const {
-        return mReportableSeverity;
-    }
+    Severity getReportableSeverity() const { return mReportableSeverity; }
 
- private:
+   private:
     //!
     //! \brief returns an appropriate string for prefixing a log message with the given severity
     //!
     static const char* severityPrefix(Severity severity) {
         switch (severity) {
-        case Severity::kINTERNAL_ERROR: return "[F] ";
-        case Severity::kERROR: return "[E] ";
-        case Severity::kWARNING: return "[W] ";
-        case Severity::kINFO: return "[I] ";
-        case Severity::kVERBOSE: return "[V] ";
-        default: assert(0); return "";
+            case Severity::kINTERNAL_ERROR:
+                return "[F] ";
+            case Severity::kERROR:
+                return "[E] ";
+            case Severity::kWARNING:
+                return "[W] ";
+            case Severity::kINFO:
+                return "[I] ";
+            case Severity::kVERBOSE:
+                return "[V] ";
+            default:
+                assert(0);
+                return "";
         }
     }
 
@@ -348,11 +348,17 @@ class Logger : public nvinfer1::ILogger {
     //!
     static const char* testResultString(TestResult result) {
         switch (result) {
-        case TestResult::kRUNNING: return "RUNNING";
-        case TestResult::kPASSED: return "PASSED";
-        case TestResult::kFAILED: return "FAILED";
-        case TestResult::kWAIVED: return "WAIVED";
-        default: assert(0); return "";
+            case TestResult::kRUNNING:
+                return "RUNNING";
+            case TestResult::kPASSED:
+                return "PASSED";
+            case TestResult::kFAILED:
+                return "FAILED";
+            case TestResult::kWAIVED:
+                return "WAIVED";
+            default:
+                assert(0);
+                return "";
         }
     }
 

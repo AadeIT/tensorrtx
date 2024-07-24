@@ -5,7 +5,7 @@ TensorRTx aims to implement popular deep learning networks with TensorRT network
 Why don't we use a parser (ONNX parser, UFF parser, caffe parser, etc), but use complex APIs to build a network from scratch? I have summarized the advantages in the following aspects.
 - **Flexible**, easy to modify the network, add/delete a layer or input/output tensor, replace a layer, merge layers, integrate preprocessing and postprocessing into network, etc.
 - **Debuggable**, construct the entire network in an incremental development manner, easy to get middle layer results.
-- **Chance to learn**, learn about the network structure during this development, rather than treating everything as a black box.
+- **Educational**, learn about the network structure during this development, rather than treating everything as a black box.
 
 The basic workflow of TensorRTx is:
 1. Get the trained models from pytorch, mxnet or tensorflow, etc. Some pytorch models can be found in my repo [pytorchx](https://github.com/wang-xinyu/pytorchx), the remaining are from popular open-source repos.
@@ -15,6 +15,11 @@ The basic workflow of TensorRTx is:
 
 ## News
 
+- `21 Jun 2024`. [WuxinrongY](https://github.com/WuxinrongY): YOLOv9-T, YOLOv9-S, YOLOv9-M
+- `28 Apr 2024`. [lindsayshuo](https://github.com/lindsayshuo): YOLOv8-pose
+- `22 Apr 2024`. [B1SH0PP](https://github.com/B1SH0PP): EfficientAd: Accurate Visual Anomaly Detection at Millisecond-Level Latencies.
+- `18 Apr 2024`. [lindsayshuo](https://github.com/lindsayshuo): YOLOv8-p2
+- `12 Mar 2024`. [lindsayshuo](https://github.com/lindsayshuo): YOLOv8-cls
 - `11 Mar 2024`. [WuxinrongY](https://github.com/WuxinrongY): YOLOv9: Learning What You Want to Learn Using Programmable Gradient Information
 - `7 Mar 2024`. [AadeIT](https://github.com/AadeIT): CSRNet: Dilated Convolutional Neural Networks for Understanding the Highly Congested Scenes
 - `17 Oct 2023`. [Rex-LK](https://github.com/Rex-LK): YOLOv8-Seg
@@ -25,14 +30,10 @@ The basic workflow of TensorRTx is:
 - `26 Oct 2022`. [ausk](https://github.com/ausk): YoloP(You Only Look Once for Panopitic Driving Perception).
 - `19 Sep 2022`. [QIANXUNZDL123](https://github.com/QIANXUNZDL123) and [lindsayshuo](https://github.com/lindsayshuo): YOLOv7.
 - `7 Sep 2022`. [xiang-wuu](https://github.com/xiang-wuu): YOLOv5 v6.2 classification models.
-- `19 Aug 2022`. [Dominic](https://github.com/Dominic-DallOsto) and [sbmalik](https://github.com/sbmalik): Yolov3-tiny and Arcface support TRT8.
-- `6 Jul 2022`. [xiang-wuu](https://github.com/xiang-wuu): SuperPoint - Self-Supervised Interest Point Detection and Description, vSLAM related.
-- `26 May 2022`. [triple-Mu](https://github.com/triple-Mu): YOLOv5 python script with CUDA Python API.
-- `23 May 2022`. [yhpark](https://github.com/yester31): Real-ESRGAN, Practical Algorithms for General Image/Video Restoration.
-- `19 May 2022`. [vjsrinivas](https://github.com/vjsrinivas): YOLOv3 TRT8 support and Python script.
 
 ## Tutorials
 
+- [How to make contribution](./tutorials/contribution.md)
 - [Install the dependencies.](./tutorials/install.md)
 - [A guide for quickly getting started, taking lenet5 as a demo.](./tutorials/getting_started.md)
 - [The .wts file content format](./tutorials/getting_started.md#the-wts-content-format)
@@ -104,6 +105,7 @@ Following models are implemented.
 |[real-esrgan](./real-esrgan)| Real-ESRGAN. The Pytorch implementation is [real-esrgan](https://github.com/xinntao/Real-ESRGAN) |
 |[superpoint](./superpoint)| SuperPoint. The Pytorch model is from [magicleap/SuperPointPretrainedNetwork](https://github.com/magicleap/SuperPointPretrainedNetwork) |
 |[csrnet](./csrnet)| CSRNet. The Pytorch implementation is [leeyeehoo/CSRNet-pytorch](https://github.com/leeyeehoo/CSRNet-pytorch) |
+|[EfficientAd](./efficient_ad)| EfficientAd: Accurate Visual Anomaly Detection at Millisecond-Level Latencies. From [anomalib](https://github.com/openvinotoolkit/anomalib) |
 
 ## Model Zoo
 
@@ -145,7 +147,7 @@ Some tricky operations encountered in these models, already solved, but might ha
 | YOLOv3-spp(darknet53) | Xeon E5-2620/GTX1080 | 1 | FP32 | 608x608 | 38.5 |
 | YOLOv4(CSPDarknet53) | Xeon E5-2620/GTX1080 | 1 | FP32 | 608x608 | 35.7 |
 | YOLOv4(CSPDarknet53) | Xeon E5-2620/GTX1080 | 4 | FP32 | 608x608 | 40.9 |
-| YOLOv4(CSPDarknet53) | Xeon E5-2620/GTX1080 | 8 | FP32 | 608x608 | 41.3 | 
+| YOLOv4(CSPDarknet53) | Xeon E5-2620/GTX1080 | 8 | FP32 | 608x608 | 41.3 |
 | YOLOv5-s v3.0 | Xeon E5-2620/GTX1080 | 1 | FP32 | 608x608 | 142 |
 | YOLOv5-s v3.0 | Xeon E5-2620/GTX1080 | 4 | FP32 | 608x608 | 173 |
 | YOLOv5-s v3.0 | Xeon E5-2620/GTX1080 | 8 | FP32 | 608x608 | 190 |
